@@ -35,3 +35,25 @@ yarn-error.log*
 /captures
 .externalNativeBuild
 .cxx
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Virtual Env
+venv/
+.env/
+
+# Packages
+*.dist-info/
+*.egg-info/
+*.zip
+
+# Node
+node_modules/
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db

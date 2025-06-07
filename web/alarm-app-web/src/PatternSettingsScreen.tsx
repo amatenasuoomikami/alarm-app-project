@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Typography, Checkbox, FormGroup, FormControlLabel, FormHelperText } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { fetchPatterns, createPattern } from './api/patterns';
 
 interface Pattern {
     id: string;
@@ -23,6 +24,19 @@ function PatternSettingsScreen({ patterns, setPatterns }: PatternSettingsScreenP
     const [open, setOpen] = useState(false);
     const [currentPattern, setCurrentPattern] = useState<Pattern>({ id: '', name: '', color: '#000000', alarms: [] });
     const [nameError, setNameError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setLoading(true);
+        fetchPatterns()
+            .then(data => {
+                setPatterns(data.patterns || []);
+                setError(null);
+            })
+            .catch(e => setError('パターン一覧の取得に失敗しました'))
+            .finally(() => setLoading(false));
+    }, [setPatterns]);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -40,17 +54,29 @@ function PatternSettingsScreen({ patterns, setPatterns }: PatternSettingsScreenP
         return true;
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!validatePatternName(currentPattern.name)) {
             return;
         }
-
-        if (currentPattern.id) {
-            setPatterns(patterns.map(p => p.id === currentPattern.id ? currentPattern : p));
-        } else {
-            setPatterns([...patterns, { ...currentPattern, id: Date.now().toString() }]);
+        setLoading(true);
+        try {
+            if (!currentPattern.id) {
+                const res = await createPattern({
+                    name: currentPattern.name,
+                    color: currentPattern.color,
+                    times: currentPattern.alarms.map(a => ({ time: a.time, sound: '' }))
+                });
+                setPatterns(prev => [...prev, { ...currentPattern, id: res.pattern_id }]);
+            } else {
+                setPatterns(patterns.map(p => p.id === currentPattern.id ? currentPattern : p));
+            }
+            setError(null);
+            handleClose();
+        } catch (e) {
+            setError('パターンの保存に失敗しました');
+        } finally {
+            setLoading(false);
         }
-        handleClose();
     };
 
     const handleDelete = (id: string) => {
@@ -83,6 +109,8 @@ function PatternSettingsScreen({ patterns, setPatterns }: PatternSettingsScreenP
 
     return (
         <div>
+            {loading && <Typography color="textSecondary">Loading...</Typography>}
+            {error && <Typography color="error">{error}</Typography>}
             <Button variant="contained" color="primary" onClick={handleOpen} startIcon={<AddIcon />}>
                 Add Pattern
             </Button>

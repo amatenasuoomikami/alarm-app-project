@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Grid, Typography, SelectChangeEvent } from '@mui/material';
 import moment from 'moment';
-
-interface Pattern {
-    id: string;
-    name: string;
-    color: string;
-    alarms: Array<{
-        time: string;
-        days: string[];
-    }>;
-}
+import { Pattern } from './api/patterns';
 
 interface AlarmFormProps {
     selectedDate: Date | null;
@@ -50,49 +41,75 @@ function AlarmForm({ selectedDate, addAlarm, setPattern, patterns }: AlarmFormPr
     console.log("AlarmForm received date:", selectedDate ? selectedDate.toISOString() : 'No date');
 
     return (
-        <Grid container spacing={3}>
-            <Grid item xs={12}>
-                <Typography variant="h6">Set Pattern for {formatDate(selectedDate)}</Typography>
+        <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+                <Typography variant="subtitle1" sx={{ fontSize: '0.9rem', fontWeight: 'bold', mb: 1 }}>
+                    パターン設定
+                </Typography>
                 <form onSubmit={handlePatternSubmit}>
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel id="pattern-select-label">Select Pattern</InputLabel>
+                    <FormControl fullWidth size="small" sx={{ mb: 1 }}>
+                        <InputLabel id="pattern-select-label" sx={{ fontSize: '0.875rem' }}>
+                            パターンを選択
+                        </InputLabel>
                         <Select
                             labelId="pattern-select-label"
                             id="pattern-select"
                             value={selectedPattern}
                             onChange={(e: SelectChangeEvent) => setSelectedPattern(e.target.value)}
+                            sx={{ fontSize: '0.875rem' }}
                         >
                             {patterns.map((pattern) => (
-                                <MenuItem key={pattern.id} value={pattern.id}>
+                                <MenuItem key={pattern.id} value={pattern.id} sx={{ fontSize: '0.875rem' }}>
                                     {pattern.name}
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
-                    <Button type="submit" variant="contained" color="primary" fullWidth>
-                        Set Pattern
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        color="primary" 
+                        fullWidth 
+                        size="small"
+                        sx={{ fontSize: '0.8rem' }}
+                    >
+                        パターン設定
                     </Button>
                 </form>
             </Grid>
-            <Grid item xs={12}>
-                <Typography variant="h6">Set Alarm for {formatDate(selectedDate)}</Typography>
+            <Grid item xs={12} sm={6}>
+                <Typography variant="subtitle1" sx={{ fontSize: '0.9rem', fontWeight: 'bold', mb: 1 }}>
+                    アラーム設定
+                </Typography>
                 <form onSubmit={handleAlarmSubmit}>
                     <TextField
-                        label="Time"
+                        label="時刻"
                         type="time"
                         value={time}
                         onChange={(e) => setTime(e.target.value)}
                         InputLabelProps={{
                             shrink: true,
+                            sx: { fontSize: '0.875rem' }
                         }}
                         inputProps={{
                             step: 300, // 5 min
                         }}
                         fullWidth
-                        margin="normal"
+                        size="small"
+                        sx={{ 
+                            mb: 1,
+                            '& .MuiInputBase-input': { fontSize: '0.875rem' }
+                        }}
                     />
-                    <Button type="submit" variant="contained" color="secondary" fullWidth>
-                        Set Alarm
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        color="secondary" 
+                        fullWidth 
+                        size="small"
+                        sx={{ fontSize: '0.8rem' }}
+                    >
+                        アラーム設定
                     </Button>
                 </form>
             </Grid>

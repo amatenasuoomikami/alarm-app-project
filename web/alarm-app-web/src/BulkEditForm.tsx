@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { FormControl, InputLabel, Select, MenuItem, Button, Typography, SelectChangeEvent } from '@mui/material';
-
-interface Pattern {
-    id: string;
-    name: string;
-    color: string;
-    alarms: Array<{
-        time: string;
-        days: string[];
-    }>;
-}
+import { Pattern } from './api/patterns';
 
 interface BulkEditFormProps {
     selectedDates: string[];
@@ -33,19 +24,22 @@ function BulkEditForm({ selectedDates, patterns, onApplyPattern }: BulkEditFormP
 
     return (
         <div>
-            <Typography variant="h6" gutterBottom>
-                Apply Pattern to Selected Dates ({selectedDates.length} selected)
+            <Typography variant="subtitle1" sx={{ fontSize: '1rem', fontWeight: 'bold', mb: 2 }}>
+                選択された日付にパターンを適用 ({selectedDates.length}日選択中)
             </Typography>
-            <FormControl fullWidth margin="normal">
-                <InputLabel id="bulk-pattern-select-label">Select Pattern</InputLabel>
+            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                <InputLabel id="bulk-pattern-select-label" sx={{ fontSize: '0.875rem' }}>
+                    パターンを選択
+                </InputLabel>
                 <Select
                     labelId="bulk-pattern-select-label"
                     id="bulk-pattern-select"
                     value={selectedPattern}
                     onChange={handlePatternChange}
+                    sx={{ fontSize: '0.875rem' }}
                 >
                     {patterns.map((pattern) => (
-                        <MenuItem key={pattern.id} value={pattern.id}>
+                        <MenuItem key={pattern.id} value={pattern.id} sx={{ fontSize: '0.875rem' }}>
                             {pattern.name}
                         </MenuItem>
                     ))}
@@ -57,8 +51,10 @@ function BulkEditForm({ selectedDates, patterns, onApplyPattern }: BulkEditFormP
                 onClick={handleApplyPattern}
                 disabled={!selectedPattern || selectedDates.length === 0}
                 fullWidth
+                size="small"
+                sx={{ fontSize: '0.8rem' }}
             >
-                Apply Pattern to Selected Dates
+                選択した日付にパターンを適用
             </Button>
         </div>
     )

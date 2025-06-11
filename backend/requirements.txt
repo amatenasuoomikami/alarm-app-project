@@ -1,3 +1,6 @@
 boto3==1.26.153
 fastapi
 uvicorn
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
